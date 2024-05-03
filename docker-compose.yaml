@@ -1,0 +1,72 @@
+services:
+
+  front-envoy:
+    build:
+      context: .
+      dockerfile: ./Dockerfile-envoy
+    depends_on:
+      service-envoy-1:
+        condition: service_healthy
+      service-envoy-2:
+        condition: service_healthy
+    ports:
+    - "${PORT_PROXY:-8080}:8080"
+    - "${PORT_HTTPS:-8443}:8443"
+    - "${PORT_STATS:-8001}:8001"
+  
+  ext_authz-opa-service:
+    build:
+      context: .
+      dockerfile: Dockerfile-opa
+    volumes:
+    - ./config/opa-service/policy.rego:/etc/policy.rego
+    command:
+    - run
+    - --server
+    - --log-format=json-pretty
+    - --set=plugins.envoy_ext_authz_grpc.addr=:9002
+    - --set=decision_logs.console=true
+    - /etc/policy.rego
+  
+  service-envoy-1:
+    build:
+      context: .
+      dockerfile: ./Dockerfile-envoy
+      target: envoy-admin
+      args:
+        ENVOY_CONFIG: ./service-envoy.yaml
+        ENVOY_ADMIN_PORT: 8001
+    depends_on:
+      service1:
+        condition: service_healthy
+
+  service1:
+    build:
+      context: ./python
+      target: aiohttp-service
+    environment:
+    - SERVICE_NAME=1
+    volumes:
+    - ./python/service.py:/code/service.py
+    
+  service-envoy-2:
+    build:
+      context: .
+      dockerfile: ./Dockerfile-envoy
+      target: envoy-admin
+      args:
+        ENVOY_ADMIN_PORT: 8001
+        ENVOY_CONFIG: ./service-envoy-2.yaml
+
+    depends_on:
+      service2:
+        condition: service_healthy
+
+  service2:
+    build:
+      context: ./python
+      target: aiohttp-service
+    environment:
+    - SERVICE_NAME=2
+    volumes:
+    - ./python/service.py:/code/service.py
