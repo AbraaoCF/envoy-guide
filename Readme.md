@@ -13,7 +13,7 @@ Um pré-requisito para esse guia é rodar Docker em sua máquina, veja [Install 
 Para começar, clone o repositório do projeto para sua máquina local:
 
 ```bash
-git clone <URL_DO_REPOSITORIO>
+git clone https://github.com/AbraaoCF/envoy-guide
 ``` 
 ### Executar Docker Compose
 
