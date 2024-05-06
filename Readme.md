@@ -1,5 +1,5 @@
 # Guia Envoy
-Nesse guia nós contruíremos nossa `envoymesh` com três services envoy rodando, uma como front-envoy na borda da aplicação (como esse guia em blog na aws, [Setting Up an Envoy Front Proxy on Amazon ECS](https://aws.amazon.com/pt/blogs/compute/setting-up-an-envoy-front-proxy-on-amazon-ecs/)) e os outros dois como sidecar de um serviço flask rodando. Ainda colocaremos um serviço externo para authorizar requests.
+Nesse guia nós contruíremos nossa `envoymesh` com três services envoy rodando, um como front-envoy na borda da aplicação (como nesse guia em blog na aws, [Setting Up an Envoy Front Proxy on Amazon ECS](https://aws.amazon.com/pt/blogs/compute/setting-up-an-envoy-front-proxy-on-amazon-ecs/)) e os outros dois como sidecar de um serviço flask sendo executado. Ainda colocaremos um serviço externo para autorizar requests.
 
 Veja o esquema abaixo: 
 ![Imagem do esquema](./extra/scheme.png)
@@ -120,7 +120,7 @@ resolved 172.23.0.3
 * Connection #0 to host localhost left intact
 ```
 
-Temos conexão com o serviço através dos dois protocolos, teste para o `/service/2 `e o resultado deve ser o semelhante.
+Temos conexão com o serviço através dos dois protocolos, teste para o `/service/2 `e o resultado deve ser semelhante.
 
 #
 
@@ -223,7 +223,7 @@ Vamos testar manter em HTTP para ver a saída:
 ```bash
 curl -v http://localhost:8080/service/1 -H "Content-Type: application/json" -d '{"nickname": "valor_do_nickname"}'
 ```
-A saída esperada vem com um código <b>403 Forbbiden</b>:
+A saída esperada vem com um código <b>403 Forbbiden</b>, indicando o bloqueio feito pelo nosso filtro externo:
 ```
 *   Trying 127.0.0.1:8080...
 * Connected to localhost (127.0.0.1) port 8080 (#0)
@@ -353,7 +353,14 @@ resolved 172.18.0.3
 * Connection #0 to host localhost left intact
 ```
 
-> <b> <i>Destaque: </i> Perceba que como estamos fazendo no serviço 1 - possui três réplicas utilizadas como primárias - e não há nenhuma configuração quanto a sincronizar os dados das réplicas no serviço, apesar da maior disponibilidade, temos inconsistência. Tente configurar de outra forma as réplicas ou o proxy para garantir consistência</b>
+> <b> <i>Destaque: </i> Perceba que como estamos fazendo no serviço 1 - possui três réplicas utilizadas como primárias - e não há nenhuma configuração quanto a sincronizar os dados das réplicas no serviço, apesar da maior disponibilidade, temos inconsistência. Tente configurar as réplicas de outra forma ou o proxy para garantir consistência.</b>
+
+#
+
+### Referências
+
+- [Envoy Sandboxes](https://www.envoyproxy.io/docs/envoy/latest/start/sandboxes/)
+- [Envoy Repository](https://github.com/envoyproxy/envoy/tree/main)
 
 #
 
