@@ -25,7 +25,7 @@ docker-compose up --build -d
 ``` 
 > <i>Destaque: </i> perceba que utilizamos uma imagem do `Dockerfile-OPA`, uma imagem envoy definida no `./docker-compose.yaml` e outra imagem para os serviços Python definida em `./python/Dockerfile`.
 
-> Foram expostas três portas para acessarmos o nosso front-envoy: 
+Foram expostas três portas para acessarmos o nosso front-envoy: 
 ```
 - "${PORT_PROXY:-8080}:8080"
 - "${PORT_HTTPS:-8443}:8443"
@@ -36,7 +36,7 @@ docker-compose up --build -d
 
 ### Rodar o GET através do envoy
 Agora que o projeto está configurado e em execução, teste as nossas <b>rotas GET</b>.
-> <i> Destaque: </i> Perceba que temos dois listeners definidos no nosso arquivo de configuração envoy.yaml:
+> <b> <i> Destaque: </i> Perceba que temos dois listeners definidos no nosso arquivo de configuração envoy.yaml: </b> 
 ```
   listeners:
   - address:
@@ -353,6 +353,9 @@ resolved 172.18.0.3
 * Connection #0 to host localhost left intact
 ```
 
-> <b> <i>Destaque: </i> Perceba que como estamos fazendo no serviço 1 - possui três réplicas utilizadas como primárias - e não há nenhuma configuração quanto a sincronizar os dados das réplicas no serviço, apesar da maior disponibilidade, temos inconsistência.</b>
+> <b> <i>Destaque: </i> Perceba que como estamos fazendo no serviço 1 - possui três réplicas utilizadas como primárias - e não há nenhuma configuração quanto a sincronizar os dados das réplicas no serviço, apesar da maior disponibilidade, temos inconsistência. Tente configurar de outra forma as réplicas ou o proxy para garantir consistência</b>
 
+#
 
+Pratique diferentes soluções com o Envoy e mande feedbacks!
+Contato: abraao.freitas@ccc.ufcg.edu.br
